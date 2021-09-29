@@ -20,13 +20,13 @@ if (productChoise === null || productChoise == 0) {
   let productPanier = [];
   for (i = 0; i < productChoise.length; i++) {
     // a chaque tour de boucle tu m'inject le code html
-
+    const quantityPrice = productChoise[i].quantity * productChoise[i].price;
     productPanier =
       productPanier +
       `
         
             <div class="recap" id="${productChoise[i].id_Product}">
-                <div>${productChoise[i].camName} - x ${productChoise[i].quantity} - prix : ${productChoise[i].price} €</div>
+                <div>${productChoise[i].camName} - x ${productChoise[i].quantity} - prix : ${quantityPrice} €</div>
                 <button class="remove" id="${productChoise[i].id_Product}"><i class="fas fa-trash-alt"></i></button>
             </div>
 
@@ -83,42 +83,37 @@ removeAll.addEventListener("click", (e) => {
   localStorage.removeItem("produit");
   alert(" le panier a été vidé ");
   window.location.href = "panier.html";
-}); 
+});
 
-// ajout Prix totale du panier 
+// ajout Prix totale du panier
 let totalPrice = [];
 for (let k = 0; k < productChoise.length; k++) {
-  let totalPricePanier = productChoise[k].price;
+  let totalPricePanier = productChoise[k].price * productChoise[k].quantity;
+  console.log(totalPrice);
 
   // mettre les prix dans un tableau
-  totalPrice.push(totalPricePanier); 
+  totalPrice.push(totalPricePanier);
   console.log(totalPrice);
 }
 
-// adition d'un tableau 
- let sum = 0;
- for (let m = 0; m < totalPrice.length; m++) {
-   sum += totalPrice[m];
- }
- console.log(sum);
+// adition d'un tableau
+let sum = 0;
+for (let m = 0; m < totalPrice.length; m++) {
+  sum += totalPrice[m];
+}
+console.log(sum);
 
- // afficher le prix  total sur le site 
+// afficher le prix  total sur le site
 
- const sumTotalPrice = ` 
+const sumTotalPrice = ` 
  <div class="display-price"> Le prix total a payé : ${sum} €</div>
  `;
 structureProduct.insertAdjacentHTML("beforeend", sumTotalPrice);
 
-
-
-// mise en place d'un formulaire 
-
-
+// mise en place d'un formulaire
 
 const displayFormHtml = () => {
-
   const formPositon = document.querySelector(".card2");
-
 
   const structureform = `
   <div class="form-order">
@@ -153,50 +148,66 @@ const displayFormHtml = () => {
   `;
 
   formPositon.insertAdjacentHTML("afterend", structureform);
-}
-displayFormHtml()
+};
+displayFormHtml();
 
+// recuperation des valeurs du form et envoyer au Local storage
 
-
-// recuperation des valeurs du form et envoyer au Local storage 
-
-// selection du btn envoyer le form 
+// selection du btn envoyer le form
 
 const sendForm = document.getElementById("sendForm");
 
-const user = {
+/* const user = {
   nom: nom.value,
   prenom: prenom.value,
   adresse: adresse.value,
   ville: ville.value,
   codePostal: codePostal.value,
   email: email.value,
-  tel: tel.value
-}
+  tel: tel.value,
+}; */
+
 sendForm.onclick = () => {
-  localStorage.setItem("nom", JSON.stringify(user));
-  
-  // rassembler le formulaire et les produits pour les envoyer au serv 
-  
-  const orderValues = {
-    productChoise,
-    user
+  // creation d'un class qui va rassembler les information de mon formulaire
+  class Formulaire {
+    constructor() {
+      this.nom = document.getElementById("nom").value;
+      this.prenom = document.getElementById("prenom").value;
+      this.adresse = document.getElementById("adresse").value;
+      this.ville = document.getElementById("ville").value;
+      this.email = document.getElementById("email").value;
+      this.codePostal = document.getElementById("codePostal").value;
+      this.tel = document.getElementById("tel").value;
+    }
   }
 
+  const formulaireValues = new Formulaire();
+
+  console.log(formulaireValues);
+
+/*   localStorage.setItem("nom", JSON.stringify(formulaireValues));
+  localStorage.setItem("produit", JSON.stringify(productChoise)); */
+  // rassembler le formulaire et les produits pour les envoyer au serv
+
+  const orderValues = {
+    productChoise,
+    formulaireValues,
+    sum,
+  };
+  localStorage.setItem("order", JSON.stringify(orderValues));
+  document.location.href = "order.html";
+
   console.log(orderValues);
-  // enoie avec POST 
-  fetch("http://localhost:3000/api/cameras/order", {
+  // enoie avec POST
+  fetch("http://localhost:3000/api/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ productChoise, user }),
+    body: JSON.stringify({ orderValues }),
   })
-    .then((response) => response.json())
-    .then((data) => {
-      localStorage.setItem("order", JSON.stringify(data));
-      document.location.href = "order.html";
-    })
-    
-
+  .then((response) => response.json())
+  .then((data) => {
+    localStorage.setItem("order", JSON.stringify(data));
+  });
 };
