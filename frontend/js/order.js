@@ -28,7 +28,7 @@ const back = document.getElementById("back");
 
 back.onclick = (e) => {
     e.preventDefault();
-    localStorage.removeItem("order");
+    localStorage.removeItem("order", "produit");
     location.href = "index.html"
 
 

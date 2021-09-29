@@ -197,7 +197,9 @@ sendForm.onclick = () => {
   localStorage.setItem("order", JSON.stringify(orderValues));
   document.location.href = "order.html";
 
+  
   console.log(orderValues);
+  localStorage.removeItem('produit')
   // enoie avec POST
   fetch("http://localhost:3000/api/", {
     method: "POST",
