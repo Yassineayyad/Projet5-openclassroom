@@ -17,9 +17,9 @@ const priceToPay = info.sum
 const orderHtml = document.querySelector(".card2");
 
 orderHtml.innerHTML = `
- <p>Bonjour ${user.nom} ${user.prenom} votre commande au prix de ${priceToPay}  a bien été effectuer et sera livrez au <span>${user.adresse} à ${user.ville}${user.codePostal} </span>. </br> Un E-mail de confirmation a été envoyer a ${user.email} . </br> Merci pour votre confiance </p>
+ <p>Bonjour ${user.firstName} ${user.lastName} votre commande au prix de ${priceToPay}  a bien été effectuer et sera livrez au <span>${user.address} à ${user.city}${user.codePostal} </span>. </br> Un E-mail de confirmation a été envoyer a ${user.email} . </br> Merci pour votre confiance </p>
         
- <button id="back">retour a l'accueil ! </button>
+ <button class="boutonAjout"id="back">retour a l'accueil ! </button>
         
         `;
 

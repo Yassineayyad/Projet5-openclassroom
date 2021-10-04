@@ -84,10 +84,11 @@ h1{
 
 .boutonAjout{
     width: 60%;
-    height: 22px;
+    height: auto;
     margin: auto;
     border-radius: 10px;
     background-color: white;
+    margin-bottom: 20px;
 }
 /* .card::before {
   content: "";
@@ -118,7 +119,7 @@ a {
 }
 nav {
     background: rgba(102, 177, 173, 0.719);
-    width: 100%;
+    width: auto;
     height: 50px;
     position: fixed;
     width: 99.2%;
@@ -127,13 +128,13 @@ nav {
 }
 
 .card-img{
-    width: 500px;
-    margin: auto;
+    width: 100%;
+    /* margin: auto; */
     align-items: center;
 }
 .card-info{
-    width: 500px;
-    margin: auto;
+    width: auto;
+    /* margin: auto; */
 }
 .remove{
     text-align: center;

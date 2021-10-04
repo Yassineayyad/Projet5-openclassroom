@@ -38,62 +38,61 @@ if (productChoise === null || productChoise == 0) {
   structureProduct.innerHTML = productPanier;
 
   console.log(productChoise[1]);
-}
+  // gestion bouton supprimer l'article
+  let btnRemove = document.querySelectorAll(".remove");
+  console.log(btnRemove);
 
-// gestion bouton supprimer l'article
-let btnRemove = document.querySelectorAll(".remove");
-console.log(btnRemove);
+  for (let l = 0; l < btnRemove.length; l++) {
+    btnRemove[l].addEventListener("click", (e) => {
+      e.preventDefault();
 
-for (let l = 0; l < btnRemove.length; l++) {
-  btnRemove[l].addEventListener("click", (e) => {
+      // section de l'id qui va etre suprimé
+
+      let removeProduct = productChoise[l].id_Product;
+      console.log(removeProduct);
+
+      // on utilise la methode filter avec le != pour suprimé celui qu'on cible
+      productChoise = productChoise.filter(
+        (produit) => produit.id_Product !== removeProduct
+      );
+
+      // on envoi la variable dans le local storage
+
+      // on transgorm en Json et on renvoi au local storage
+      localStorage.setItem("produit", JSON.stringify(productChoise));
+
+      // alerte pour dire que c'est supprimé et recharger la page
+      window.location.href = "panier.html";
+      alert("ce produit a été supprimer de votre panier");
+    });
+  }
+  // boutton vider le panier
+
+  const btnRemoveAll = `
+  <button class="remove-all"> Videz le panier </button>
+  `;
+
+  structureProduct.insertAdjacentHTML("beforeend", btnRemoveAll);
+
+  const removeAll = document.querySelector(".remove-all");
+
+  removeAll.addEventListener("click", (e) => {
     e.preventDefault();
-
-    // section de l'id qui va etre suprimé
-
-    let removeProduct = productChoise[l].id_Product;
-    console.log(removeProduct);
-
-    // on utilise la methode filter avec le != pour suprimé celui qu'on cible
-    productChoise = productChoise.filter(
-      (produit) => produit.id_Product !== removeProduct
-    );
-
-    // on envoi la variable dans le local storage
-
-    // on transgorm en Json et on renvoi au local storage
-    localStorage.setItem("produit", JSON.stringify(productChoise));
-
-    // alerte pour dire que c'est supprimé et recharger la page
+    localStorage.removeItem("produit");
+    alert(" le panier a été vidé ");
     window.location.href = "panier.html";
-    alert("ce produit a été supprimer de votre panier");
   });
 }
-// boutton vier le panier
-
-const btnRemoveAll = `
-<button class="remove-all"> Videz le panier </button>
-`;
-
-structureProduct.insertAdjacentHTML("beforeend", btnRemoveAll);
-
-const removeAll = document.querySelector(".remove-all");
-
-removeAll.addEventListener("click", (e) => {
-  e.preventDefault();
-  localStorage.removeItem("produit");
-  alert(" le panier a été vidé ");
-  window.location.href = "panier.html";
-});
 
 // ajout Prix totale du panier
 let totalPrice = [];
 for (let k = 0; k < productChoise.length; k++) {
   let totalPricePanier = productChoise[k].price * productChoise[k].quantity;
-  console.log(totalPrice);
+ /*  console.log(totalPrice); */
 
   // mettre les prix dans un tableau
   totalPrice.push(totalPricePanier);
-  console.log(totalPrice);
+ /*  console.log(totalPrice); */
 }
 
 // adition d'un tableau
@@ -101,7 +100,7 @@ let sum = 0;
 for (let m = 0; m < totalPrice.length; m++) {
   sum += totalPrice[m];
 }
-console.log(sum);
+/* console.log(sum); */
 
 // afficher le prix  total sur le site
 
@@ -120,16 +119,16 @@ const displayFormHtml = () => {
             <h2>Merci de remplir ce formulaire pour passer votre commande</h2>
             <form>
                 <label for="nom">Nom :</label>
-                <input type="text" id="nom" name="nom" required>
+                <input type="text" id="firstName" name="nom" required>
 
                 <label for="prenom">Prénom :</label>
-                <input type="text" id="prenom" name="prenom" required>
+                <input type="text" id="lastName" name="prenom" required>
 
                 <label for="adresse">Adresse :</label>
-                <input type="text" id="adresse" name="adresse" required>
+                <input type="text" id="address" name="adresse" required>
 
                 <label for="ville">Ville :</label>
-                <input type="text" id="ville" name="ville" required>
+                <input type="text" id="city" name="ville" required>
 
                 <label for="codePostal">Code Postal :</label>
                 <input type="text" id="codePostal" name="codePostal" required>
@@ -167,49 +166,89 @@ const sendForm = document.getElementById("sendForm");
   tel: tel.value,
 }; */
 
-sendForm.onclick = () => {
+
+sendForm.onclick = (e) => {
+  e.preventDefault();
   // creation d'un class qui va rassembler les information de mon formulaire
-  class Formulaire {
-    constructor() {
-      this.nom = document.getElementById("nom").value;
-      this.prenom = document.getElementById("prenom").value;
-      this.adresse = document.getElementById("adresse").value;
-      this.ville = document.getElementById("ville").value;
-      this.email = document.getElementById("email").value;
-      this.codePostal = document.getElementById("codePostal").value;
-      this.tel = document.getElementById("tel").value;
-    }
-  }
+  let contact = {
+    firstName: document.getElementById("firstName").value,
+    lastName: document.getElementById("lastName").value,
+    address: document.getElementById("address").value,
+    city: document.getElementById("city").value,
+    email: document.getElementById("email").value,
+  };
 
-  const formulaireValues = new Formulaire();
+  console.log(contact);
+  localStorage.setItem("contact", JSON.stringify(contact))
+  // validation du formulaire avec regex
 
-  console.log(formulaireValues);
+  const regexNom = /^(([a-zA-ZÀ-ÿ]+[\s\-]{1}[a-zA-ZÀ-ÿ]+)|([a-zA-ZÀ-ÿ]+))$/;
+  const regexVille =
+    /^(([a-zA-ZÀ-ÿ]+[\s\-]{1}[a-zA-ZÀ-ÿ]+)|([a-zA-ZÀ-ÿ]+)){1,10}$/;
+  const regexMail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]{2,10}\.[a-z]{2,4}$/;
+  const regexAdresse = /^(([a-zA-ZÀ-ÿ0-9]+[\s\-]{1}[a-zA-ZÀ-ÿ0-9]+)){1,10}$/;
 
-/*   localStorage.setItem("nom", JSON.stringify(formulaireValues));
-  localStorage.setItem("produit", JSON.stringify(productChoise)); */
+  if (
+    regexMail.test(contact.email) == true &&
+    regexNom.test(contact.firstName) == true &&
+    regexNom.test(contact.lastName) == true &&
+    regexVille.test(contact.city) == true &&
+    regexAdresse.test(contact.address) == true
+  ) {
+    e.preventDefault();
   // rassembler le formulaire et les produits pour les envoyer au serv
 
   const orderValues = {
     productChoise,
-    formulaireValues,
+    contact,
     sum,
   };
   localStorage.setItem("order", JSON.stringify(orderValues));
-  document.location.href = "order.html";
 
-  
   console.log(orderValues);
-  localStorage.removeItem('produit')
+  /*  window.location.href = "./order.html"; */
+  /*  localStorage.removeItem('produit') */
   // enoie avec POST
-  fetch("http://localhost:3000/api/", {
+  let products = productChoise
+  console.log(products);
+  const lastFetch = fetch("http://localhost:3000/api/cameras/order", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ orderValues }),
-  })
-  .then((response) => response.json())
-  .then((data) => {
-    localStorage.setItem("order", JSON.stringify(data));
+    body: JSON.stringify({ contact }),
   });
+  console.log(lastFetch);
+  // Pour voir le résultat du serveur dans la console
+ /*  lastFetch.then(async (response) => {
+    try {
+      console.log("Response du serveur :" + response);
+      const data = await response.json();
+      console.log("Contenu du serveur : " + data);
+
+      if (response.ok) {
+        console.log(`Resultat de response.ok : ${response.ok}`);
+        // Récupération de l'id de la response du serveur
+        console.log("id de response");
+        console.log("Id de la réponse :" + contenu.orderId);
+
+        // Mettre le orderId dans le local storage
+        localStorage.setItem("responseOrderId", contenu.orderId);
+
+        // Aller vers la page confirmation-commande
+        window.location = "order.html";
+      } else {
+        console.log(`Reponse du serveur : ${response.status}`);
+        alert(`Problème avec le serveur : erreur ${response.status}`);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }); */
+  } else {
+    alert(
+      "Veuillez correctement renseigner l'entièreté du formulaire pour valider votre commande."
+    );
+  }
+ 
 };
