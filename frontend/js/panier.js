@@ -37,7 +37,7 @@ if (productChoise === null || productChoise == 0) {
 
   structureProduct.innerHTML = productPanier;
 
-  console.log(productChoise[1]);
+  
   // gestion bouton supprimer l'article
   let btnRemove = document.querySelectorAll(".remove");
   console.log(btnRemove);
@@ -182,11 +182,10 @@ sendForm.onclick = (e) => {
   localStorage.setItem("contact", JSON.stringify(contact))
   // validation du formulaire avec regex
 
-  const regexNom = /^(([a-zA-ZÀ-ÿ]+[\s\-]{1}[a-zA-ZÀ-ÿ]+)|([a-zA-ZÀ-ÿ]+))$/;
-  const regexVille =
-    /^(([a-zA-ZÀ-ÿ]+[\s\-]{1}[a-zA-ZÀ-ÿ]+)|([a-zA-ZÀ-ÿ]+)){1,10}$/;
+  const regexNom = /^[A-Z-a-z\s]{3,40}$/;
+  const regexVille = /^[A-Z-a-z\s]{3,40}$/;
   const regexMail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]{2,10}\.[a-z]{2,4}$/;
-  const regexAdresse = /^(([a-zA-ZÀ-ÿ0-9]+[\s\-]{1}[a-zA-ZÀ-ÿ0-9]+)){1,10}$/;
+  const regexAdresse = /^[A-Z-a-z-0-9\s]{5,80}$/;
 
   if (
     regexMail.test(contact.email) == true &&
@@ -203,38 +202,38 @@ sendForm.onclick = (e) => {
     contact,
     sum,
   };
+
   localStorage.setItem("order", JSON.stringify(orderValues));
 
   console.log(orderValues);
-  /*  window.location.href = "./order.html"; */
   /*  localStorage.removeItem('produit') */
   // enoie avec POST
-  let products = productChoise
-  console.log(products);
+  
+  
   const lastFetch = fetch("http://localhost:3000/api/cameras/order", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ contact }),
+    body: JSON.stringify( orderValues ),
   });
   console.log(lastFetch);
   // Pour voir le résultat du serveur dans la console
- /*  lastFetch.then(async (response) => {
+  /*  lastFetch.then(async (response) => {
     try {
       console.log("Response du serveur :" + response);
       const data = await response.json();
       console.log("Contenu du serveur : " + data);
-
+      
       if (response.ok) {
         console.log(`Resultat de response.ok : ${response.ok}`);
         // Récupération de l'id de la response du serveur
         console.log("id de response");
         console.log("Id de la réponse :" + contenu.orderId);
-
+        
         // Mettre le orderId dans le local storage
         localStorage.setItem("responseOrderId", contenu.orderId);
-
+        
         // Aller vers la page confirmation-commande
         window.location = "order.html";
       } else {
@@ -245,10 +244,11 @@ sendForm.onclick = (e) => {
       console.error(error);
     }
   }); */
-  } else {
-    alert(
-      "Veuillez correctement renseigner l'entièreté du formulaire pour valider votre commande."
+    window.location.href = "./order.html";
+} else {
+  alert(
+    "Veuillez correctement renseigner l'entièreté du formulaire pour valider votre commande."
     );
   }
- 
+  
 };

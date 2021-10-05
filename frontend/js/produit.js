@@ -75,19 +75,19 @@ fetch(newUrl)
 
     // selection de l'id des quantité
     const idQuantity = document.querySelector("#quantity");
-    console.log(idQuantity);
-    // mettre le choix dans une variable
-
+ 
+    
     // bouton ajouter au panier
-
+    
     const btnPanier = document.querySelector("#btn-envoyer");
     /* console.log(btnPanier); */
-
+    
     /* envoyer le panier */
-
+    
     btnPanier.addEventListener("click", (e) => {
       e.preventDefault();
-
+      
+      // mettre le choix dans une variable
       const choiseOption = idOptions.value;
       console.log(choiseOption);
 
@@ -135,11 +135,9 @@ Consultez le panier 'OK' retour a l'accueil 'ANNULER'`)
         localStorage.setItem("produit", JSON.stringify(productChoise));
         confimationCommande();
       };
-      // verifier si des produit dans present dans le local storage
+      // verifier si des produit sont present  dans le local storage
       if (productChoise) {
         addLocalStorage();
-
-        
       } else {
         productChoise = [];
         addLocalStorage();
