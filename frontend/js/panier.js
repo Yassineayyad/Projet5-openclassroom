@@ -1,4 +1,4 @@
-let productChoise = JSON.parse(localStorage.getItem("produit"));
+let productChose = JSON.parse(localStorage.getItem("produit"));
 
 //-- Affichage des produit du panier
 
@@ -9,7 +9,7 @@ console.log(structureProduct);
 
 // controler si le panier est vide
 
-if (productChoise === null || productChoise == 0) {
+if (productChose === null || productChose == 0) {
   const panierNull = `
     <div class= "panier-vide">
         <div> le panier est vide </div>
@@ -18,16 +18,16 @@ if (productChoise === null || productChoise == 0) {
   structureProduct.innerHTML = panierNull;
 } else {
   let productPanier = [];
-  for (i = 0; i < productChoise.length; i++) {
+  for (i = 0; i < productChose.length; i++) {
     // a chaque tour de boucle tu m'inject le code html
-    const quantityPrice = productChoise[i].quantity * productChoise[i].price;
+    const quantityPrice = productChose[i].quantity * productChose[i].price;
     productPanier =
       productPanier +
       `
         
-            <div class="recap" id="${productChoise[i].id_Product}">
-                <div>${productChoise[i].camName} - x ${productChoise[i].quantity} - prix : ${quantityPrice} €</div>
-                <button class="remove" id="${productChoise[i].id_Product}"><i class="fas fa-trash-alt"></i></button>
+            <div class="recap" id="${productChose[i].id_Product}">
+                <div>${productChose[i].camName} - x ${productChose[i].quantity} - prix : ${quantityPrice} €</div>
+                <button class="remove" id="${productChose[i].id_Product}"><i class="fas fa-trash-alt"></i></button>
             </div>
 
         
@@ -37,7 +37,6 @@ if (productChoise === null || productChoise == 0) {
 
   structureProduct.innerHTML = productPanier;
 
-  
   // gestion bouton supprimer l'article
   let btnRemove = document.querySelectorAll(".remove");
   console.log(btnRemove);
@@ -48,18 +47,18 @@ if (productChoise === null || productChoise == 0) {
 
       // section de l'id qui va etre suprimé
 
-      let removeProduct = productChoise[l].id_Product;
+      let removeProduct = productChose[l].id_Product;
       console.log(removeProduct);
 
       // on utilise la methode filter avec le != pour suprimé celui qu'on cible
-      productChoise = productChoise.filter(
+      productChose = productChose.filter(
         (produit) => produit.id_Product !== removeProduct
       );
 
       // on envoi la variable dans le local storage
 
       // on transgorm en Json et on renvoi au local storage
-      localStorage.setItem("produit", JSON.stringify(productChoise));
+      localStorage.setItem("produit", JSON.stringify(productChose));
 
       // alerte pour dire que c'est supprimé et recharger la page
       window.location.href = "panier.html";
@@ -86,13 +85,13 @@ if (productChoise === null || productChoise == 0) {
 
 // ajout Prix totale du panier
 let totalPrice = [];
-for (let k = 0; k < productChoise.length; k++) {
-  let totalPricePanier = productChoise[k].price * productChoise[k].quantity;
- /*  console.log(totalPrice); */
+for (let k = 0; k < productChose.length; k++) {
+  let totalPricePanier = productChose[k].price * productChose[k].quantity;
+  /*  console.log(totalPrice); */
 
   // mettre les prix dans un tableau
   totalPrice.push(totalPricePanier);
- /*  console.log(totalPrice); */
+  /*  console.log(totalPrice); */
 }
 
 // adition d'un tableau
@@ -170,85 +169,95 @@ const sendForm = document.getElementById("sendForm");
 sendForm.onclick = (e) => {
   e.preventDefault();
   // creation d'un class qui va rassembler les information de mon formulaire
-  let contact = {
+  const contact = {
     firstName: document.getElementById("firstName").value,
     lastName: document.getElementById("lastName").value,
     address: document.getElementById("address").value,
     city: document.getElementById("city").value,
     email: document.getElementById("email").value,
+    tel: document.getElementById("tel").value,
   };
+  // création du tableau product
+  const products = [];
+  productChose.forEach(produit => {
+    products.push(produit.id_Product);
+  });
 
+  console.log("products");
+  console.log(products);
   console.log(contact);
-  localStorage.setItem("contact", JSON.stringify(contact))
+  localStorage.setItem("contact", JSON.stringify(contact));
   // validation du formulaire avec regex
 
   const regexNom = /^[A-Z-a-z\s]{3,40}$/;
   const regexVille = /^[A-Z-a-z\s]{3,40}$/;
   const regexMail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]{2,10}\.[a-z]{2,4}$/;
-  const regexAdresse = /^[A-Z-a-z-0-9\s]{5,80}$/;
+  const regexAdresse = /^[0-9]{1,5}( [-a-zA-Zàâäéèêëïîôöùûüç ]+)+$/;
+  const regexTel = /^(0|\\+33|0033)[1-9][0-9]{8}$/;
 
   if (
     regexMail.test(contact.email) == true &&
     regexNom.test(contact.firstName) == true &&
     regexNom.test(contact.lastName) == true &&
     regexVille.test(contact.city) == true &&
-    regexAdresse.test(contact.address) == true
+    regexAdresse.test(contact.address) == true &&
+    regexTel.test(contact.tel)
   ) {
     e.preventDefault();
-  // rassembler le formulaire et les produits pour les envoyer au serv
+    // rassembler le formulaire et les produits pour les envoyer au serv
 
-  const orderValues = {
-    productChoise,
-    contact,
-    sum,
-  };
+    const orderValues = {
+      products,
+      contact,
+      sum,
+    };
 
-  localStorage.setItem("order", JSON.stringify(orderValues));
+    localStorage.setItem("order", JSON.stringify(orderValues));
 
-  console.log(orderValues);
-  /*  localStorage.removeItem('produit') */
-  // enoie avec POST
-  
-  
-  const lastFetch = fetch("http://localhost:3000/api/cameras/order", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify( orderValues ),
-  });
-  console.log(lastFetch);
-  // Pour voir le résultat du serveur dans la console
-  /*  lastFetch.then(async (response) => {
-    try {
-      console.log("Response du serveur :" + response);
-      const data = await response.json();
-      console.log("Contenu du serveur : " + data);
-      
-      if (response.ok) {
-        console.log(`Resultat de response.ok : ${response.ok}`);
-        // Récupération de l'id de la response du serveur
-        console.log("id de response");
-        console.log("Id de la réponse :" + contenu.orderId);
-        
-        // Mettre le orderId dans le local storage
-        localStorage.setItem("responseOrderId", contenu.orderId);
-        
-        // Aller vers la page confirmation-commande
-        window.location = "order.html";
-      } else {
-        console.log(`Reponse du serveur : ${response.status}`);
-        alert(`Problème avec le serveur : erreur ${response.status}`);
+    console.log(orderValues);
+    /*  localStorage.removeItem('produit') */
+    // enoie avec POST
+
+    dataToSend = JSON.stringify({ contact, products });
+    const lastFetch = fetch("http://localhost:3000/api/cameras/order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: dataToSend,
+    });
+    console.log(lastFetch);
+    console.log(typeof products);
+    // Pour voir le résultat du serveur dans la console
+    lastFetch.then(async (response) => {
+      try {
+        console.log("Response du serveur :" + response);
+        const data = await response.json();
+        console.log("Contenu du serveur : " + data);
+
+        if (response.ok) {
+          console.log(`Resultat de response.ok : ${response.ok}`);
+          // Récupération de l'id de la response du serveur
+          console.log("id de response");
+          console.log("Id de la réponse :" + data.orderId);
+          const dataId = data.orderId;
+          // Mettre le orderId dans le local storage
+          localStorage.setItem("orderid",  dataId );
+
+          // Aller vers la page confirmation-commande
+          window.location = "order.html";
+        } else {
+          console.log(`Reponse du serveur : ${response.status}`);
+          alert(`Problème avec le serveur : erreur ${response.status}`);
+        }
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error(error);
-    }
-  }); */
-    window.location.href = "./order.html";
-} else {
-  alert(
-    "Veuillez correctement renseigner l'entièreté du formulaire pour valider votre commande."
+    });
+    
+  } else {
+    alert(
+      "Veuillez correctement renseigner l'entièreté du formulaire pour valider votre commande."
     );
   }
-  
 };

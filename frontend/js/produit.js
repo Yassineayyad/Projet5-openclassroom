@@ -75,18 +75,17 @@ fetch(newUrl)
 
     // selection de l'id des quantité
     const idQuantity = document.querySelector("#quantity");
- 
-    
+
     // bouton ajouter au panier
-    
+
     const btnPanier = document.querySelector("#btn-envoyer");
     /* console.log(btnPanier); */
-    
+
     /* envoyer le panier */
-    
+
     btnPanier.addEventListener("click", (e) => {
       e.preventDefault();
-      
+
       // mettre le choix dans une variable
       const choiseOption = idOptions.value;
       console.log(choiseOption);
@@ -132,6 +131,7 @@ Consultez le panier 'OK' retour a l'accueil 'ANNULER'`)
       const addLocalStorage = () => {
         // ajout dans le tableau de l'objet avec value choisie par utilisateur
         productChoise.push(optionsProduct);
+        // La méthode push() ajoute un ou plusieurs éléments à la fin d'un tableau et retourne la nouvelle taille du tableau.
         localStorage.setItem("produit", JSON.stringify(productChoise));
         confimationCommande();
       };
